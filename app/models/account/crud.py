@@ -30,6 +30,14 @@ class AccountCRUD:
             return user
         raise InvalidPassword()
 
+    def verify_account(self, email: str) -> Account:
+        user = self.db.query(Account).filter_by(email=email).one()
+        user.email_verified = True
+        self.db.commit()
+        self.db.refresh(user)
+        self.db.reset()
+        return user
+
 
 class InvalidPassword(Exception):
     pass
