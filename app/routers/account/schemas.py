@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from uuid import UUID
 
 
 class AccountLogin(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 
@@ -14,5 +14,5 @@ class AccountCreate(AccountLogin):
 class AccountResponse(BaseModel):
     id: UUID
     name: str
-    email: str
+    email: EmailStr
     email_verified: bool
