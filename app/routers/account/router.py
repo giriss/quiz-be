@@ -25,8 +25,8 @@ def create(account: AccountCreate, db: Annotated[Session, Depends(get_db)]):
     account_crud = AccountCRUD(db)
     try:
         return account_crud.create(account.name, account.email, account.password)
-    except IntegrityError:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    except IntegrityError as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
 
 
 @router.post("/login", response_model=AccountResponse)
@@ -36,8 +36,8 @@ def login(response: Response, account: AccountLogin, db: Annotated[Session, Depe
         user = account_crud.authenticate(account.email, account.password)
         response.headers['X-Token'] = encode_auth_token(user.id)
         return user
-    except (NoResultFound, InvalidPassword):
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    except (NoResultFound, InvalidPassword) as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
 
 
 @router.get("/verify/{token}", status_code=status.HTTP_204_NO_CONTENT)
@@ -45,5 +45,5 @@ def verify(token: str, db: Annotated[Session, Depends(get_db)]):
     try:
         email = decode_verification_token(token)
         AccountCRUD(db).verify_account(email)
-    except InvalidTokenError:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    except InvalidTokenError as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e

@@ -27,5 +27,5 @@ def get_current_user(
         user_id = decode_auth_token(header.credentials)
         response.headers['X-Token'] = encode_auth_token(user_id)
         return AccountCRUD(db).find(user_id)
-    except jwt.exceptions.InvalidTokenError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    except jwt.exceptions.InvalidTokenError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED) from e

@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
 
@@ -16,3 +17,4 @@ class AccountResponse(BaseModel):
     name: str
     email: EmailStr
     email_verified: bool
+    created_at: datetime
