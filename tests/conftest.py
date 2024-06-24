@@ -21,12 +21,28 @@ def db_session():
 
 
 @fixture
-def created_user(db_session: Session):
+def verified_user(db_session: Session):
     account = Account(
         id=uuid4(),
         name="Girish Gopaul",
         email="girish@gopaul.me",
         email_verified=True,
+        # password="JustAPass01!"
+        password_hash="$2b$12$U0NJfwAp/aBMx7EPktNAR.7chKu24k4NsSyLppN/lzjrzSNWYjy56"
+    )
+    db_session.add(account)
+    db_session.commit()
+    db_session.refresh(account)
+    return account
+
+
+@fixture
+def unverified_user(db_session: Session):
+    account = Account(
+        id=uuid4(),
+        name="Girish Gopaul",
+        email="girish@gopaul.me",
+        email_verified=False,
         # password="JustAPass01!"
         password_hash="$2b$12$U0NJfwAp/aBMx7EPktNAR.7chKu24k4NsSyLppN/lzjrzSNWYjy56"
     )
