@@ -1,5 +1,6 @@
 # envrc
 .envrc
+*.envrc
 
 # macOS
 .DS_Store
