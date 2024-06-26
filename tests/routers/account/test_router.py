@@ -19,8 +19,6 @@ def test_register(db_session: Session):
     assert response.status_code == status.HTTP_201_CREATED
     assert isinstance(body["id"], str)
     assert body["name"] == "Girish Gopaul"
-    assert body["emails"][0]["address"] == "girish@gopaul.me"
-    assert not body["emails"][0]["verified"]
     assert match(datetime_format, body["created_at"])
 
 
@@ -33,18 +31,7 @@ def test_me(verified_user: Account):
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.headers.get('X-Token'), str)
     assert body["name"] == "Girish Gopaul"
-    assert body["emails"][0]["address"] == "girish@gopaul.me"
-    assert body["emails"][0]["verified"]
     assert match(datetime_format, body["created_at"])
-
-
-def test_verify(unverified_user: Account, db_session: Session):
-    email_token = encode_verification_token(unverified_user.emails[0].address)
-    assert not unverified_user.emails[0].verified
-    response = client.get(f"/accounts/verify/{email_token}")
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-    db_session.refresh(unverified_user)
-    assert unverified_user.emails[0].verified
 
 
 def test_login(verified_user: Account):
@@ -56,6 +43,4 @@ def test_login(verified_user: Account):
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.headers.get('X-Token'), str)
     assert body["name"] == "Girish Gopaul"
-    assert body["emails"][0]["address"] == "girish@gopaul.me"
-    assert body["emails"][0]["verified"]
     assert match(datetime_format, body["created_at"])

@@ -2,10 +2,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Response, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound, IntegrityError
-from jwt.exceptions import InvalidTokenError
 from .schemas import AccountLogin, AccountCreate, AccountResponse
-from ...utils import encode_auth_token, decode_verification_token
-from ...models import AccountCRUD, Account, InvalidPassword, EmailCRUD
+from ...utils import encode_auth_token
+from ...models import AccountCRUD, Account, InvalidPassword
 from ...deps import get_db, get_current_user
 
 router = APIRouter()
@@ -39,15 +38,4 @@ def login(response: Response, account: AccountLogin, db: Annotated[Session, Depe
         response.headers['X-Token'] = encode_auth_token(user.id)
         return user
     except (NoResultFound, InvalidPassword) as e:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
-
-
-@router.get("/verify/{token}", status_code=status.HTTP_204_NO_CONTENT)
-def verify(token: str, db: Annotated[Session, Depends(get_db)]):
-    email_crud = EmailCRUD(db)
-    try:
-        email = decode_verification_token(token)
-        email_crud.verify_account(email)
-        email_crud.commit()
-    except InvalidTokenError as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e

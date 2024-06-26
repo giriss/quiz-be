@@ -17,8 +17,7 @@ class AccountCRUD(CRUDBase):
         return account
 
     def find(self, uuid: str) -> Account:
-        result = self.db.query(Account).filter_by(id=uuid).one()
-        return result
+        return self.db.query(Account).filter_by(id=uuid).one()
 
     def authenticate(self, email: str, password: str) -> Account:
         user = self.db.query(Account).join(Email).filter_by(address=email).one()
