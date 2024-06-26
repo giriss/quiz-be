@@ -12,9 +12,16 @@ class AccountCreate(AccountLogin):
     name: str
 
 
+class EmailResponse(BaseModel):
+    id: UUID
+    address: EmailStr
+    verified: bool
+    primary: bool
+    created_at: datetime
+
+
 class AccountResponse(BaseModel):
     id: UUID
     name: str
-    email: EmailStr
-    email_verified: bool
+    emails: list[EmailResponse]
     created_at: datetime

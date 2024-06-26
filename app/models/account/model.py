@@ -1,14 +1,23 @@
+import uuid
 import sqlalchemy as sa
-import datetime as dt
+from sqlalchemy.orm import relationship
+from ..utils import get_utc_time
 from ...db import Base
+
+cols = [
+    sa.Column('id', sa.Uuid, primary_key=True, default=uuid.uuid4),
+    sa.Column('name', sa.String(200), nullable=False),
+    sa.Column('password_hash', sa.String(60)),
+    sa.Column('created_at', sa.DateTime, nullable=False, default=get_utc_time, server_default=sa.func.now())
+]
 
 
 class Account(Base):
     __tablename__ = "accounts"
 
-    id = sa.Column(sa.UUID, primary_key=True)
-    name = sa.Column('name', sa.String(200), nullable=False)
-    email = sa.Column('email', sa.String(200), nullable=False)
-    email_verified = sa.Column('email_verified', sa.Boolean, nullable=False, default=False)
-    password_hash = sa.Column('password_hash', sa.String(60))
-    created_at = sa.Column('created_at', sa.DateTime, nullable=False, default=dt.datetime.now(dt.UTC))
+    id = cols[0]
+    name = cols[1]
+    password_hash = cols[2]
+    created_at = cols[3]
+
+    emails = relationship("Email", back_populates="account")

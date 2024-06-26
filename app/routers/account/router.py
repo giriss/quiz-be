@@ -5,7 +5,7 @@ from sqlalchemy.exc import NoResultFound, IntegrityError
 from jwt.exceptions import InvalidTokenError
 from .schemas import AccountLogin, AccountCreate, AccountResponse
 from ...utils import encode_auth_token, decode_verification_token
-from ...models import AccountCRUD, Account, InvalidPassword
+from ...models import AccountCRUD, Account, InvalidPassword, EmailCRUD
 from ...deps import get_db, get_current_user
 
 router = APIRouter()
@@ -24,7 +24,9 @@ def show(db: Annotated[Session, Depends(get_db)], user: Annotated[Account, Depen
 def create(account: AccountCreate, db: Annotated[Session, Depends(get_db)]):
     account_crud = AccountCRUD(db)
     try:
-        return account_crud.create(account.name, account.email, account.password)
+        new_account = account_crud.create(account.name, account.email, account.password)
+        account_crud.commit(new_account)
+        return new_account
     except IntegrityError as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
 
@@ -42,8 +44,10 @@ def login(response: Response, account: AccountLogin, db: Annotated[Session, Depe
 
 @router.get("/verify/{token}", status_code=status.HTTP_204_NO_CONTENT)
 def verify(token: str, db: Annotated[Session, Depends(get_db)]):
+    email_crud = EmailCRUD(db)
     try:
         email = decode_verification_token(token)
-        AccountCRUD(db).verify_account(email)
+        email_crud.verify_account(email)
+        email_crud.commit()
     except InvalidTokenError as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
