@@ -9,3 +9,7 @@ class EmailResponse(BaseModel):
     verified: bool
     primary: bool
     created_at: datetime
+
+
+class EmailCreate(BaseModel):
+    address: EmailStr

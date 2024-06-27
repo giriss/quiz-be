@@ -3,6 +3,7 @@ from pytest import fixture
 from sqlalchemy.orm import Session
 from app.db import Base
 from app.models import Account, Email
+from app.utils import encode_auth_token
 from .db import engine, session_maker
 
 
@@ -60,3 +61,8 @@ def unverified_user(db_session: Session):
     db_session.commit()
     db_session.refresh(account)
     return account
+
+
+@fixture
+def verified_user_with_token(verified_user: Account):
+    return verified_user, encode_auth_token(verified_user.id)
