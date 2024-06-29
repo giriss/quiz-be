@@ -13,7 +13,7 @@ class AccountCRUD(CRUDBase):
         password_hash = None if password is None else hashpw(prehash_pw(password), gensalt()).decode()
         account = Account(id=uuid4(), name=name, password_hash=password_hash)
         self.db.add(account)
-        EmailCRUD(self.db).create(address=email, primary=True, account_id=account.id)
+        EmailCRUD(self.db, account).create(address=email, primary=True)
         return account
 
     def find(self, uuid: str) -> Account:

@@ -68,8 +68,8 @@ def test_create_duplicate(verified_user_with_token: tuple[Account, str], db_sess
 
 def test_set_primary(verified_user_with_token: tuple[Account, str], db_session: Session):
     user, auth_token = verified_user_with_token
-    email_crud = EmailCRUD(db_session)
-    email = email_crud.create("gopaul0510@gmail.com", user.id)
+    email_crud = EmailCRUD(db_session, user)
+    email = email_crud.create("gopaul0510@gmail.com")
     email_crud.commit(email)
     assert email.primary is False
     response = client.patch(f"/accounts/emails/{email.id}/primary", headers={

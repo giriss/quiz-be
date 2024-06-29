@@ -22,13 +22,27 @@ def create(
         user: Annotated[Account, Depends(get_current_user)],
         db: Annotated[Session, Depends(get_db)]
 ):
-    email_crud = EmailCRUD(db)
-    created_email = email_crud.create(email.address, user.id)
+    email_crud = EmailCRUD(db, user)
+    created_email = email_crud.create(email.address)
     try:
         email_crud.commit(created_email)
         return created_email
     except IntegrityError as e:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY) from e
+
+
+@router.patch("/{uuid}/primary", status_code=status.HTTP_204_NO_CONTENT)
+def set_primary(
+        uuid: str,
+        user: Annotated[Account, Depends(get_current_user)],
+        db: Annotated[Session, Depends(get_db)]
+):
+    email_crud = EmailCRUD(db, user)
+    try:
+        email = email_crud.make_primary(uuid)
+        email_crud.commit(email)
+    except NoResultFound as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
 
 
 @router.patch("/verify/{token}", status_code=status.HTTP_204_NO_CONTENT)
@@ -39,18 +53,4 @@ def verify(token: str, db: Annotated[Session, Depends(get_db)]):
         email_crud.verify(email)
         email_crud.commit()
     except InvalidTokenError as e:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
-
-
-@router.patch("/{uuid}/primary", status_code=status.HTTP_204_NO_CONTENT)
-def set_primary(
-        uuid: str,
-        user: Annotated[Account, Depends(get_current_user)],
-        db: Annotated[Session, Depends(get_db)]
-):
-    email_crud = EmailCRUD(db)
-    try:
-        email = email_crud.make_primary(uuid, user.id)
-        email_crud.commit(email)
-    except NoResultFound as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
