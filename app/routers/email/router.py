@@ -31,6 +31,16 @@ def create(
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY) from e
 
 
+@router.delete("/{uuid}", status_code=status.HTTP_204_NO_CONTENT)
+def delete(uuid: str, user: Annotated[Account, Depends(get_current_user)], db: Annotated[Session, Depends(get_db)]):
+    email_crud = EmailCRUD(db, user)
+    try:
+        email_crud.delete(uuid)
+        email_crud.commit()
+    except NoResultFound as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY) from e
+
+
 @router.patch("/{uuid}/primary", status_code=status.HTTP_204_NO_CONTENT)
 def set_primary(
         uuid: str,

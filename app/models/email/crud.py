@@ -1,3 +1,4 @@
+from uuid import UUID
 from .model import Email
 from ..crud_base import CRUDBase
 
@@ -8,10 +9,13 @@ class EmailCRUD(CRUDBase):
         self.db.add(email)
         return email
 
-    def make_primary(self, uuid: str):
+    def delete(self, uuid: str | UUID):
+        self.db.query(Email).filter_by(id=str(uuid), account_id=str(self.user.id)).delete()
+
+    def make_primary(self, uuid: str | UUID):
         email_query = self.db.query(Email).filter_by(account_id=str(self.user.id))
         email_query.update({"primary": False})
-        email = email_query.filter_by(id=uuid).one()
+        email = email_query.filter_by(id=str(uuid)).one()
         email.primary = True
         return email
 
