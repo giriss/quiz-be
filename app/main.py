@@ -9,6 +9,7 @@ origins = [
     "http://localhost:4173",
     "https://quiz-fe.gopaul.me",
     "https://quiz-fe.girish.monster",
+    "https://question.it.com",
 ]
 
 app.add_middleware(
