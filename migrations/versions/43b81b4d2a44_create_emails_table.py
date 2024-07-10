@@ -23,6 +23,7 @@ def upgrade() -> None:
         "emails",
         *cols
     )
+    op.create_foreign_key(None, "emails", "accounts", ["account_id"], ["id"])
 
 
 def downgrade() -> None:
