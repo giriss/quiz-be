@@ -15,4 +15,13 @@ class AccountCreate(AccountLogin):
 class AccountResponse(BaseModel):
     id: UUID
     name: str
+    picture_id: UUID | None
     created_at: datetime
+
+
+class AccountPictureSignature(BaseModel):
+    api_key: str
+    timestamp: int
+    public_id: str
+    signature: str
+    cloud_name: str

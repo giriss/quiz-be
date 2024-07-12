@@ -25,6 +25,10 @@ class AccountCRUD(CRUDBase):
             return user
         raise InvalidPassword()
 
+    def set_picture(self, account_id: str, picture_id: str):
+        account = self.find(account_id)
+        account.picture_id = picture_id
+
 
 class InvalidPassword(Exception):
     pass
