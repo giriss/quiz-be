@@ -2,6 +2,7 @@ from hashlib import sha256
 from uuid import uuid4
 from base64 import b64encode
 from bcrypt import hashpw, gensalt, checkpw
+from cloudinary.uploader import destroy as cloudinary_destroy
 from .model import Account
 from ..email import Email
 from ..email import EmailCRUD
@@ -27,6 +28,8 @@ class AccountCRUD(CRUDBase):
 
     def set_picture(self, account_id: str, picture_id: str):
         account = self.find(account_id)
+        if account.picture_id is not None:
+            cloudinary_destroy(f"{account.id}_{account.picture_id}", resource_type="image")
         account.picture_id = picture_id
 
 
