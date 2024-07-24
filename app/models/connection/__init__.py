@@ -1,3 +1,4 @@
 from .model import Connection
+from .crud import ConnectionCRUD
 
-__all__ = ["Connection"]
+__all__ = ["Connection", "ConnectionCRUD"]

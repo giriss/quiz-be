@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from hashlib import sha256
 from uuid import uuid4
 from base64 import b64encode
@@ -21,8 +22,8 @@ class AccountCRUD(CRUDBase):
     def search(self, query: str) -> List[Account]:
         return self.db.query(Account).filter(Account.name.ilike(f"%{query}%")).limit(10).all()
 
-    def find(self, uuid: str) -> Account:
-        return self.db.query(Account).filter_by(id=uuid).one()
+    def find(self, uuid: str | UUID) -> Account:
+        return self.db.query(Account).filter_by(id=str(uuid)).one()
 
     def authenticate(self, email: str, password: str) -> Account:
         user = self.db.query(Account).join(Email).filter_by(address=email).one()
