@@ -31,7 +31,6 @@ def verified_user(db_session: Session):
     )
     db_session.add(account)
     db_session.add(Email(
-        id=uuid4(),
         address="girish@gopaul.me",
         verified=True,
         primary=True,
@@ -52,7 +51,6 @@ def unverified_user(db_session: Session):
     )
     db_session.add(account)
     db_session.add(Email(
-        id=uuid4(),
         address="girish@gopaul.me",
         verified=False,
         primary=True,

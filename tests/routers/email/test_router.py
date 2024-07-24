@@ -11,7 +11,6 @@ def test_index(verified_user_with_token: tuple[Account, str]):
     body = response.json()
     assert response.status_code == status.HTTP_200_OK
     assert len(body) == 1
-    assert body[0]["id"] == str(user.emails[0].id)
     assert body[0]["address"] == user.emails[0].address
     assert body[0]["verified"]
     assert body[0]["primary"]
@@ -45,7 +44,6 @@ def test_create(verified_user_with_token: tuple[Account, str], db_session: Sessi
 
     assert db_session.query(Email).count() == 2
     assert response.status_code == status.HTTP_201_CREATED
-    assert isinstance(body["id"], str)
     assert body["address"] == "gopaul0510@gmail.com"
     assert body["verified"] is False
     assert body["primary"] is False
@@ -72,7 +70,7 @@ def test_set_primary(verified_user_with_token: tuple[Account, str], db_session: 
     email = email_crud.create("gopaul0510@gmail.com")
     email_crud.commit(email)
     assert email.primary is False
-    response = client.patch(f"/accounts/emails/{email.id}/primary", headers={
+    response = client.patch(f"/accounts/emails/gopaul0510@gmail.com/primary", headers={
         "Authorization": f"Bearer {auth_token}"
     })
     assert response.status_code == status.HTTP_204_NO_CONTENT
