@@ -1,3 +1,4 @@
+from typing import List
 from hashlib import sha256
 from uuid import uuid4
 from base64 import b64encode
@@ -16,6 +17,9 @@ class AccountCRUD(CRUDBase):
         self.db.add(account)
         EmailCRUD(self.db, account).create(address=email, primary=True)
         return account
+
+    def search(self, query: str) -> List[Account]:
+        return self.db.query(Account).filter(Account.name.ilike(f"%{query}%")).limit(10).all()
 
     def find(self, uuid: str) -> Account:
         return self.db.query(Account).filter_by(id=uuid).one()

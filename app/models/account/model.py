@@ -23,3 +23,5 @@ class Account(Base):
     created_at = cols[4]
 
     emails = relationship("Email", back_populates="account")
+    sent_requests = relationship("Connection", back_populates="requester", foreign_keys="Connection.requester_id")
+    received_requests = relationship("Connection", back_populates="responder", foreign_keys="Connection.responder_id")

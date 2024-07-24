@@ -12,10 +12,13 @@ class AccountCreate(AccountLogin):
     name: str
 
 
-class AccountResponse(BaseModel):
+class AccountSearchItem(BaseModel):
     id: UUID
     name: str
     picture_id: UUID | None
+
+
+class AccountResponse(AccountSearchItem):
     created_at: datetime
 
 
