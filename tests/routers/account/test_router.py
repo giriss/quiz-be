@@ -11,6 +11,7 @@ def test_register(db_session: Session):
     assert db_session.query(Account).count() == 0
 
     response = client.post("/accounts/register", json={
+        "username": "gir.ish",
         "name": "Girish Gopaul",
         "email": "girish@gopaul.me",
         "password": "JustAPass01!"
@@ -29,6 +30,7 @@ def test_register_duplicate(verified_user: Account, db_session: Session):
 
     response = client.post("/accounts/register", json={
         "name": "Girish Gopaul",
+        "username": "gir.ish",
         "email": verified_user.emails[0].address,
         "password": "JustAPass01!"
     })

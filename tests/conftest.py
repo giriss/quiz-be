@@ -26,6 +26,7 @@ def verified_user(db_session: Session):
     account = Account(
         id=uuid4(),
         name="Girish Gopaul",
+        username="gir.ish",
         # password="JustAPass01!"
         password_hash="$2b$12$U0NJfwAp/aBMx7EPktNAR.7chKu24k4NsSyLppN/lzjrzSNWYjy56"
     )
@@ -46,6 +47,7 @@ def unverified_user(db_session: Session):
     account = Account(
         id=uuid4(),
         name="Girish Gopaul",
+        username="gir.ish",
         # password="JustAPass01!"
         password_hash="$2b$12$U0NJfwAp/aBMx7EPktNAR.7chKu24k4NsSyLppN/lzjrzSNWYjy56"
     )

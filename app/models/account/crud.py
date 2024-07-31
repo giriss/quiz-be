@@ -5,6 +5,7 @@ from uuid import uuid4
 from base64 import b64encode
 from bcrypt import hashpw, gensalt, checkpw
 from cloudinary.uploader import destroy as cloudinary_destroy
+from sqlalchemy import or_
 from .model import Account
 from ..email import Email
 from ..email import EmailCRUD
@@ -12,18 +13,28 @@ from ..crud_base import CRUDBase
 
 
 class AccountCRUD(CRUDBase):
-    def create(self, name: str, email: str, password: str = None) -> Account:
+    def create(self, name: str, username: str, email: str, password: str = None) -> Account:
         password_hash = None if password is None else hashpw(prehash_pw(password), gensalt()).decode()
-        account = Account(id=uuid4(), name=name, password_hash=password_hash)
+        account = Account(id=uuid4(), username=username, name=name, password_hash=password_hash)
         self.db.add(account)
         EmailCRUD(self.db, account).create(address=email, primary=True)
         return account
 
     def search(self, query: str) -> List[Account]:
-        return self.db.query(Account).filter(Account.name.ilike(f"%{query}%")).limit(10).all()
+        q = f"%{query}%"
+        return self.db.query(Account).filter(
+            or_(Account.name.ilike(q), Account.username.ilike(q))
+        ).limit(10).all()
 
-    def find(self, uuid: str | UUID) -> Account:
-        return self.db.query(Account).filter_by(id=str(uuid)).one()
+    def is_username_available(self, username: str):
+        return self.db.query(Account).filter_by(username=username).count() == 0
+
+    def find(self, uuid_or_username: str | UUID) -> Account:
+        try:
+            uuid = UUID(hex=uuid_or_username) if isinstance(uuid_or_username, str) else uuid_or_username
+            return self.db.query(Account).filter_by(id=str(uuid)).one()
+        except ValueError:
+            return self.db.query(Account).filter_by(username=uuid_or_username).one()
 
     def authenticate(self, email: str, password: str) -> Account:
         user = self.db.query(Account).join(Email).filter_by(address=email).one()

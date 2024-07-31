@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from jwt import InvalidTokenError
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
-from ...models import Account, EmailCRUD
+from ...models import EmailCRUD
 from ...deps import get_current_user, get_db, CurrentUser
 from .schemas import EmailResponse, EmailCreate
 from ...utils import decode_verification_token
