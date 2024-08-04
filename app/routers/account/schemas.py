@@ -18,15 +18,8 @@ class CheckAvailabilityParam(BaseModel):
     _validate_username = field_validator("username")(validate_username)
 
 
-class AccountUsernameLogin(BaseModel):
-    username: str = UsernamePath
-    password: str
-
-    _validate_username = field_validator("username")(validate_username)
-
-
-class AccountEmailLogin(BaseModel):
-    email: EmailStr
+class AccountLogin(BaseModel):
+    identifier: str
     password: str
 
 
@@ -65,6 +58,3 @@ class AccountPictureSignature(BaseModel):
     public_id: str
     signature: str
     cloud_name: str
-
-
-AccountLogin = AccountEmailLogin | AccountUsernameLogin

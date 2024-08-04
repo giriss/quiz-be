@@ -37,7 +37,7 @@ def create(account: AccountCreate, db: Annotated[Session, Depends(get_db)]):
 def login(response: Response, account: AccountLogin, db: Annotated[Session, Depends(get_db)]):
     account_crud = AccountCRUD(db)
     try:
-        user = account_crud.authenticate(account.email, account.password)
+        user = account_crud.authenticate(account.identifier, account.password)
         response.headers['X-Token'] = encode_auth_token(user.id)
         return user
     except (NoResultFound, InvalidPassword) as e:

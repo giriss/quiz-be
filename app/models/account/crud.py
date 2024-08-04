@@ -36,8 +36,11 @@ class AccountCRUD(CRUDBase):
         except ValueError:
             return self.db.query(Account).filter_by(username=uuid_or_username).one()
 
-    def authenticate(self, email: str, password: str) -> Account:
-        user = self.db.query(Account).join(Email).filter_by(address=email).one()
+    def authenticate(self, identifier: str, password: str) -> Account:
+        user = self.db.query(Account).join(Email).filter(or_(
+            Email.address==identifier,
+            Account.username==identifier,
+        )).one()
         if checkpw(prehash_pw(password), user.password_hash.encode()):
             return user
         raise InvalidPassword()
